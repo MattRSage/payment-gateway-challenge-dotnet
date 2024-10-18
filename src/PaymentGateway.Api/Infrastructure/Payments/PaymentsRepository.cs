@@ -5,7 +5,7 @@ namespace PaymentGateway.Api.Infrastructure.Payments;
 public class PaymentsRepository : IPaymentRepository
 {
     public List<Payment> Payments = new();
-    
+
     public void Add(Payment payment)
     {
         Payments.Add(payment);

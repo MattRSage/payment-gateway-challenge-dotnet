@@ -1,6 +1,7 @@
 ﻿using FluentValidation.AspNetCore;
 
 using Microsoft.AspNetCore.Mvc;
+
 using PaymentGateway.Api.Models.Requests;
 using PaymentGateway.Api.Models.Responses;
 using PaymentGateway.Api.Services;
@@ -12,7 +13,7 @@ namespace PaymentGateway.Api.Controllers;
 public class PaymentsController : Controller
 {
     private readonly PaymentService _paymentService;
-    
+
     public PaymentsController(
         PaymentService paymentService)
     {

@@ -19,7 +19,7 @@ public class PostPaymentRequestValidatorTests
     {
         var request = new PostPaymentRequest("", 4, 2025, "123", "GBP", 100);
         var result = _validator.TestValidate(request);
-        
+
         result.ShouldHaveValidationErrorFor(x => x.CardNumber)
             .WithErrorMessage("Card number is required.");
     }
@@ -29,7 +29,7 @@ public class PostPaymentRequestValidatorTests
     {
         var request = new PostPaymentRequest("ABCDEFG12345678", 4, 2025, "123", "GBP", 100);
         var result = _validator.TestValidate(request);
-        
+
         result.ShouldHaveValidationErrorFor(x => x.CardNumber)
             .WithErrorMessage("Card number must contain only numeric characters.");
     }
@@ -39,7 +39,7 @@ public class PostPaymentRequestValidatorTests
     {
         var request = new PostPaymentRequest("12345678", 4, 2025, "123", "GBP", 100);
         var result = _validator.TestValidate(request);
-        
+
         result.ShouldHaveValidationErrorFor(x => x.CardNumber)
             .WithErrorMessage("Card number must be between 14-19 characters long.");
     }
@@ -49,7 +49,7 @@ public class PostPaymentRequestValidatorTests
     {
         var request = new PostPaymentRequest("2222405343248877", 0, 2025, "123", "GBP", 100);
         var result = _validator.TestValidate(request);
-        
+
         result.ShouldHaveValidationErrorFor(x => x.ExpiryMonth)
             .WithErrorMessage("Expiry month is required.");
     }
@@ -59,7 +59,7 @@ public class PostPaymentRequestValidatorTests
     {
         var request = new PostPaymentRequest("2222405343248877", 13, 2025, "123", "GBP", 100);
         var result = _validator.TestValidate(request);
-        
+
         result.ShouldHaveValidationErrorFor(x => x.ExpiryMonth)
             .WithErrorMessage("Expiry month must be between 1-12.");
     }
@@ -69,7 +69,7 @@ public class PostPaymentRequestValidatorTests
     {
         var request = new PostPaymentRequest("2222405343248877", 4, 2020, "123", "GBP", 100);
         var result = _validator.TestValidate(request);
-        
+
         result.ShouldHaveValidationErrorFor(x => x.ExpiryYear)
             .WithErrorMessage("Expiry year must be in the future.");
     }
@@ -79,7 +79,7 @@ public class PostPaymentRequestValidatorTests
     {
         var request = new PostPaymentRequest("2222405343248877", 4, 2025, "123", "", 100);
         var result = _validator.TestValidate(request);
-        
+
         result.ShouldHaveValidationErrorFor(x => x.Currency)
             .WithErrorMessage("Currency is required.");
     }
@@ -89,7 +89,7 @@ public class PostPaymentRequestValidatorTests
     {
         var request = new PostPaymentRequest("2222405343248877", 4, 2025, "123", "AUD", 100);
         var result = _validator.TestValidate(request);
-        
+
         result.ShouldHaveValidationErrorFor(x => x.Currency)
             .WithErrorMessage("Invalid currency code.");
     }
@@ -99,7 +99,7 @@ public class PostPaymentRequestValidatorTests
     {
         var request = new PostPaymentRequest("2222405343248877", 4, 2025, "123", "GBP", 0);
         var result = _validator.TestValidate(request);
-        
+
         result.ShouldHaveValidationErrorFor(x => x.Amount)
             .WithErrorMessage("Amount must be greater than 0.");
     }
@@ -109,7 +109,7 @@ public class PostPaymentRequestValidatorTests
     {
         var request = new PostPaymentRequest("2222405343248877", 4, 2025, "", "GBP", 100);
         var result = _validator.TestValidate(request);
-        
+
         result.ShouldHaveValidationErrorFor(x => x.Cvv)
             .WithErrorMessage("CVV is required.");
     }
@@ -119,7 +119,7 @@ public class PostPaymentRequestValidatorTests
     {
         var request = new PostPaymentRequest("2222405343248877", 4, 2025, "12", "GBP", 100);
         var result = _validator.TestValidate(request);
-        
+
         result.ShouldHaveValidationErrorFor(x => x.Cvv)
             .WithErrorMessage("CVV must be 3-4 characters long.");
     }
@@ -129,7 +129,7 @@ public class PostPaymentRequestValidatorTests
     {
         var request = new PostPaymentRequest("2222405343248877", 4, 2025, "ABC", "GBP", 100);
         var result = _validator.TestValidate(request);
-        
+
         result.ShouldHaveValidationErrorFor(x => x.Cvv)
             .WithErrorMessage("CVV must contain only numeric characters.");
     }
@@ -139,7 +139,7 @@ public class PostPaymentRequestValidatorTests
     {
         var request = new PostPaymentRequest("2222405343248877", 4, 2025, "123", "GBP", 100);
         var result = _validator.TestValidate(request);
-        
+
         result.ShouldNotHaveAnyValidationErrors();
     }
 }

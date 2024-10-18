@@ -20,13 +20,13 @@ public class AcquiringBankClient : IAcquiringBankClient
         try
         {
             using var response = await _httpClient.PostAsJsonAsync("/payments", request, new JsonSerializerOptions());
-            
+
             response.EnsureSuccessStatusCode();
-            
+
             var acquiringBankPaymentResponse = await response.Content.ReadFromJsonAsync<AcquiringBankPaymentResponse>();
 
-            return acquiringBankPaymentResponse is null 
-                ? new AcquiringBankPaymentResult.Error() 
+            return acquiringBankPaymentResponse is null
+                ? new AcquiringBankPaymentResult.Error()
                 : new AcquiringBankPaymentResult.Success(
                     acquiringBankPaymentResponse.Authorized,
                     acquiringBankPaymentResponse.AuthorizationCode);

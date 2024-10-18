@@ -17,7 +17,7 @@ namespace PaymentGateway.Api.Tests.IntegrationTests;
 public class PaymentsControllerTests
 {
     private readonly Random _random = new();
-    
+
     [Fact]
     public async Task GetPayment_IdExists_ReturnsPayment()
     {
@@ -43,7 +43,7 @@ public class PaymentsControllerTests
         // Act
         var response = await client.GetAsync($"/api/Payments/{payment.Id}");
         var paymentResponse = await response.Content.ReadFromJsonAsync<PostPaymentResponse>();
-        
+
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(paymentResponse);
@@ -55,21 +55,21 @@ public class PaymentsControllerTests
         // Arrange
         var webApplicationFactory = new WebApplicationFactory<PaymentsController>();
         var client = webApplicationFactory.CreateClient();
-        
+
         // Act
         var response = await client.GetAsync($"/api/Payments/{Guid.NewGuid()}");
-        
+
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
-    
+
     [Fact]
     public async Task PostPayment_ReturnsAuthorizedPayment()
     {
         // Arrange
         var webApplicationFactory = new WebApplicationFactory<PaymentsController>();
         var client = webApplicationFactory.CreateClient();
-        
+
         var request = new PostPaymentRequest(
             CardNumber: "2222405343248877",
             ExpiryMonth: 4,
@@ -81,7 +81,7 @@ public class PaymentsControllerTests
         // Act
         var response = await client.PostAsJsonAsync($"/api/Payments", request);
         var paymentResponse = await response.Content.ReadFromJsonAsync<PostPaymentResponse>();
-        
+
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         paymentResponse!.Id.Should().NotBeEmpty();
@@ -92,14 +92,14 @@ public class PaymentsControllerTests
         paymentResponse.Currency.Should().Be(request.Currency);
         paymentResponse.Amount.Should().Be(request.Amount);
     }
-    
+
     [Fact]
     public async Task PostPayment_ReturnsDeclinedPayment()
     {
         // Arrange
         var webApplicationFactory = new WebApplicationFactory<PaymentsController>();
         var client = webApplicationFactory.CreateClient();
-        
+
         var request = new PostPaymentRequest(
             CardNumber: "2222405343248112",
             ExpiryMonth: 1,
@@ -111,7 +111,7 @@ public class PaymentsControllerTests
         // Act
         var response = await client.PostAsJsonAsync($"/api/Payments", request);
         var paymentResponse = await response.Content.ReadFromJsonAsync<PostPaymentResponse>();
-        
+
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         paymentResponse!.Id.Should().NotBeEmpty();
@@ -122,14 +122,14 @@ public class PaymentsControllerTests
         paymentResponse.Currency.Should().Be(request.Currency);
         paymentResponse.Amount.Should().Be(request.Amount);
     }
-    
+
     [Fact]
     public async Task PostPayment_ReturnsRejected()
     {
         // Arrange
         var webApplicationFactory = new WebApplicationFactory<PaymentsController>();
         var client = webApplicationFactory.CreateClient();
-        
+
         var request = new PostPaymentRequest(
             CardNumber: "222240",
             ExpiryMonth: 13,
@@ -141,13 +141,13 @@ public class PaymentsControllerTests
         // Act
         var response = await client.PostAsJsonAsync($"/api/Payments", request);
         var paymentResponse = await response.Content.ReadFromJsonAsync<Dictionary<string, string[]>>();
-        
+
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        
+
         paymentResponse.Should().ContainKey("CardNumber");
         paymentResponse!["CardNumber"].Should().Contain("Card number must be between 14-19 characters long.");
-        
+
         paymentResponse.Should().ContainKey("ExpiryMonth");
         paymentResponse["ExpiryMonth"].Should().Contain("Expiry month must be between 1-12.");
 
@@ -163,7 +163,7 @@ public class PaymentsControllerTests
         paymentResponse.Should().ContainKey("Amount");
         paymentResponse["Amount"].Should().Contain("Amount must be greater than 0.");
     }
-    
+
     [Theory]
     [InlineData("2222405343248877", 4, 2025, "123", "GBP", 100, PaymentStatus.Authorized)] // Authorized payment
     [InlineData("2222405343248112", 1, 2026, "456", "USD", 60000, PaymentStatus.Declined)] // Declined payment
@@ -179,7 +179,7 @@ public class PaymentsControllerTests
         // Arrange
         var webApplicationFactory = new WebApplicationFactory<PaymentsController>();
         var client = webApplicationFactory.CreateClient();
-        
+
         var request = new PostPaymentRequest(
             CardNumber: cardNumber,
             ExpiryMonth: expiryMonth,
@@ -187,14 +187,14 @@ public class PaymentsControllerTests
             Cvv: cvv,
             Currency: currency,
             Amount: amount);
-        
+
         var postResponse = await client.PostAsJsonAsync($"/api/Payments", request);
         var paymentPostResponse = await postResponse.Content.ReadFromJsonAsync<PostPaymentResponse>();
 
         // Act
         var response = await client.GetAsync($"/api/Payments/{paymentPostResponse!.Id}");
         var paymentResponse = await response.Content.ReadFromJsonAsync<GetPaymentResponse>();
-        
+
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         paymentResponse!.Id.Should().Be(paymentPostResponse.Id);
@@ -205,7 +205,7 @@ public class PaymentsControllerTests
         paymentResponse.Currency.Should().Be(request.Currency);
         paymentResponse.Amount.Should().Be(request.Amount);
     }
-    
+
     [Fact]
     public async Task PostPayment_AcquiringBankNotAvailable_Returns500Error()
     {
@@ -220,15 +220,16 @@ public class PaymentsControllerTests
 
         var webApplicationFactory = new WebApplicationFactory<PaymentsController>();
         var client = webApplicationFactory.WithWebHostBuilder(builder =>
-                builder.ConfigureServices((context, services) => {
+                builder.ConfigureServices((context, services) =>
+                {
                     context.Configuration["AcquiringBank:BaseUri"] = "https://localhost:8080/random";
                 }))
             .CreateClient();
-        
+
         // Act
         var response = await client.PostAsJsonAsync($"/api/Payments", request);
         var responseString = await response.Content.ReadAsStringAsync();
-        
+
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
     }

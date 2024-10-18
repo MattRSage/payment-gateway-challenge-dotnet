@@ -14,11 +14,11 @@ public class ProcessPaymentResult : OneOfBase<
     private ProcessPaymentResult(OneOf<Success, Rejected, Error> _) : base(_) { }
 
     public static implicit operator ProcessPaymentResult(Success _) => new(_);
-    
+
     public static implicit operator ProcessPaymentResult(Rejected _) => new(_);
-    
+
     public static implicit operator ProcessPaymentResult(Error _) => new(_);
-    
+
     public record Success(Payment Payment);
     public record Rejected(ValidationResult ValidationResult);
     public record Error;

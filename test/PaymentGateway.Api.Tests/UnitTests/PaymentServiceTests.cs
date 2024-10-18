@@ -23,11 +23,11 @@ public class PaymentServiceTests
     public PaymentServiceTests()
     {
         _paymentService = new PaymentService(
-            _mockAcquiringBankClient.Object, 
-            _paymentsRepository, 
+            _mockAcquiringBankClient.Object,
+            _paymentsRepository,
             _mockValidator.Object);
     }
-    
+
     [Fact]
     public async Task ProcessPayment_ValidRequest_ReturnsSuccessResult()
     {
@@ -46,7 +46,7 @@ public class PaymentServiceTests
         _paymentsRepository.Payments.Should().HaveCount(1);
         _paymentsRepository.Payments[0].Status.Should().Be(PaymentStatus.Authorized);
     }
-    
+
     [Fact]
     public async Task ProcessPayment_AcquiringBankDeclines_ReturnsSuccessResultWithDeclinedStatus()
     {
@@ -65,7 +65,7 @@ public class PaymentServiceTests
         _paymentsRepository.Payments.Should().HaveCount(1);
         _paymentsRepository.Payments[0].Status.Should().Be(PaymentStatus.Declined);
     }
-    
+
     [Fact]
     public async Task ProcessPayment_InvalidRequest_ReturnsRejectedResult()
     {
@@ -100,7 +100,7 @@ public class PaymentServiceTests
         result.AsT2.Should().NotBeNull();
         _paymentsRepository.Payments.Should().BeEmpty();
     }
-    
+
     [Fact]
     public async Task ProcessPayment_ValidRequest_SetsCorrectPaymentDetails()
     {
@@ -151,7 +151,7 @@ public class PaymentServiceTests
         // Assert
         result.Should().BeNull();
     }
-    
+
     [Fact]
     public void GetPayment_MultiplePayments_ReturnsCorrectPayment()
     {
@@ -169,7 +169,7 @@ public class PaymentServiceTests
         result1.Should().BeEquivalentTo(payment1);
         result2.Should().BeEquivalentTo(payment2);
     }
-    
+
     private static PostPaymentRequest CreateValidPostPaymentRequest()
     {
         return new PostPaymentRequest(
@@ -178,9 +178,9 @@ public class PaymentServiceTests
             ExpiryYear: 2025,
             Cvv: "123",
             Currency: "USD",
-            Amount:100);
+            Amount: 100);
     }
-    
+
     private void SetupValidatorSuccess()
     {
         _mockValidator.Setup(v => v.ValidateAsync(It.IsAny<PostPaymentRequest>(), default))
@@ -198,7 +198,7 @@ public class PaymentServiceTests
         _mockAcquiringBankClient.Setup(c => c.ProcessPayment(It.IsAny<AcquiringBankPaymentRequest>()))
             .ReturnsAsync(new AcquiringBankPaymentResult.Success(Authorized: true, AuthorizationCode: "0bb07405-6d44-4b50-a14f-7ae0beff13ad"));
     }
-    
+
     private void SetupAcquiringBankClientDeclined()
     {
         _mockAcquiringBankClient.Setup(c => c.ProcessPayment(It.IsAny<AcquiringBankPaymentRequest>()))

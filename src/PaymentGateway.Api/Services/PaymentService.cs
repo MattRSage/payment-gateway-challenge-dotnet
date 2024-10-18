@@ -7,15 +7,15 @@ using PaymentGateway.Api.Models.Requests;
 
 namespace PaymentGateway.Api.Services;
 
-public class PaymentService 
+public class PaymentService
 {
     private readonly IValidator<PostPaymentRequest> _validator;
     private readonly IAcquiringBankClient _acquiringBankClient;
     private readonly PaymentsRepository _paymentRepository;
 
     public PaymentService(
-        IAcquiringBankClient acquiringBankClient, 
-        PaymentsRepository paymentRepository, 
+        IAcquiringBankClient acquiringBankClient,
+        PaymentsRepository paymentRepository,
         IValidator<PostPaymentRequest> validator)
     {
         _acquiringBankClient = acquiringBankClient;
@@ -30,10 +30,10 @@ public class PaymentService
         {
             var payment = CreatePayment(
                 request,
-                PaymentStatus.Rejected); 
-                
+                PaymentStatus.Rejected);
+
             _paymentRepository.Add(payment);
-            
+
             return new ProcessPaymentResult.Rejected(validationResult);
         }
 
@@ -45,7 +45,7 @@ public class PaymentService
             Currency = request.Currency,
             Amount = request.Amount
         };
-            
+
         var result = await _acquiringBankClient.ProcessPayment(paymentRequest);
 
         return result.Match<ProcessPaymentResult>(
@@ -54,10 +54,10 @@ public class PaymentService
                 var payment = CreatePayment(
                     request,
                     success.Authorized ? PaymentStatus.Authorized : PaymentStatus.Declined,
-                    success.AuthorizationCode); 
-                
+                    success.AuthorizationCode);
+
                 _paymentRepository.Add(payment);
-                
+
                 return new ProcessPaymentResult.Success(payment);
             },
             error => new ProcessPaymentResult.Error());
