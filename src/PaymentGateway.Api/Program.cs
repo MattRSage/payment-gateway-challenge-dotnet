@@ -17,6 +17,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<PaymentService>();
 builder.Services.AddSingleton<PaymentsRepository>();
+builder.Services.AddSingleton<IClock, SystemClock>();
 builder.Services.AddSingleton<IValidator<PostPaymentRequest>, PostPaymentRequestValidator>();
 
 builder.Services.AddHttpClient<IAcquiringBankClient, AcquiringBankClient>()

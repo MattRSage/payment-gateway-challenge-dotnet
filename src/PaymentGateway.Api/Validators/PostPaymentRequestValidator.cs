@@ -3,15 +3,19 @@ using System.Text.RegularExpressions;
 using FluentValidation;
 
 using PaymentGateway.Api.Models.Requests;
+using PaymentGateway.Api.Services;
 
 namespace PaymentGateway.Api.Validators;
 
 public class PostPaymentRequestValidator : AbstractValidator<PostPaymentRequest>
 {
     private static readonly string[] ValidCurrencies = ["USD", "EUR", "GBP"];
+    private readonly IClock _clock;
 
-    public PostPaymentRequestValidator()
+    public PostPaymentRequestValidator(IClock clock)
     {
+        _clock = clock;
+
         RuleFor(x => x.CardNumber)
             .NotEmpty().WithMessage("Card number is required.")
             .Length(14, 19).WithMessage("Card number must be between 14-19 characters long.")
@@ -42,12 +46,12 @@ public class PostPaymentRequestValidator : AbstractValidator<PostPaymentRequest>
 
     private static bool BeNumeric(string value) => Regex.IsMatch(value, @"^\d+$");
 
-    private static bool HaveValidExpiryDate(int month, int year)
+    private bool HaveValidExpiryDate(int month, int year)
     {
         try
         {
             var expiryDate = new DateTime(year, month, 1).AddMonths(1).AddDays(-1); // Last day of the month
-            return expiryDate > DateTime.UtcNow;
+            return expiryDate > _clock.UtcNow;
         }
         catch
         {

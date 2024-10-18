@@ -1,17 +1,22 @@
 using FluentValidation.TestHelper;
 
+using Moq;
+
 using PaymentGateway.Api.Models.Requests;
+using PaymentGateway.Api.Services;
 using PaymentGateway.Api.Validators;
 
 namespace PaymentGateway.Api.Tests.UnitTests;
 
 public class PostPaymentRequestValidatorTests
 {
+    private readonly Mock<IClock> _mockClock = new();
     private readonly PostPaymentRequestValidator _validator;
 
     public PostPaymentRequestValidatorTests()
     {
-        _validator = new PostPaymentRequestValidator();
+        _mockClock.Setup(x => x.UtcNow).Returns(new DateTime(2023, 6, 1));
+        _validator = new PostPaymentRequestValidator(_mockClock.Object);
     }
 
     [Fact]

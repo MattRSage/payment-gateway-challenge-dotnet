@@ -6,3 +6,6 @@ Assumptions
 Improvements
 1. For errors, I would use a standard error response like the ProblemDetails RFC 9457 https://www.rfc-editor.org/rfc/rfc9457
 2. If the application has promise to grow, I would add layers to the service and choose an appropriate architecture like CA or HA
+3. We should make the post payment endpoint idempotent to avoid creating multiple payments for the same request. This could be achieved by sending an idempotency key as a request header.
+4. It would be a good idea to pass cancellation tokens from the controller down to the HttpClient request. If we were using a real DB, we could pass the cancellation token there too.
+5. It makes sense to include a CreatedAt timestamp on the Payment.
