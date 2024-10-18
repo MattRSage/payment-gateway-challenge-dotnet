@@ -1,4 +1,10 @@
+using FluentValidation;
+
+using PaymentGateway.Api.Infrastructure.AcquiringBank;
+using PaymentGateway.Api.Infrastructure.Payments;
+using PaymentGateway.Api.Models.Requests;
 using PaymentGateway.Api.Services;
+using PaymentGateway.Api.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +15,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSingleton<PaymentService>();
 builder.Services.AddSingleton<PaymentsRepository>();
+builder.Services.AddSingleton<IValidator<PostPaymentRequest>, PostPaymentRequestValidator>();
+
+builder.Services.AddHttpClient<IAcquiringBankClient, AcquiringBankClient>()
+    .ConfigureHttpClient(x => x.BaseAddress = new Uri(builder.Configuration["AcquiringBank:BaseUri"]!));
 
 var app = builder.Build();
 
