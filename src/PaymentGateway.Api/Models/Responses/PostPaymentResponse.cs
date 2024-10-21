@@ -1,10 +1,8 @@
-﻿using PaymentGateway.Api.Domain.Payments;
-
-namespace PaymentGateway.Api.Models.Responses;
+﻿namespace PaymentGateway.Api.Models.Responses;
 
 public record PostPaymentResponse(
     Guid Id,
-    PaymentStatus Status,
+    string Status,
     string CardNumberLastFour,
     int ExpiryMonth,
     int ExpiryYear,

@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 
+using PaymentGateway.Api.Mapping;
 using PaymentGateway.Api.Models.Requests;
 using PaymentGateway.Api.Models.Responses;
 using PaymentGateway.Api.Services;
@@ -28,7 +29,7 @@ public class PaymentsController : Controller
         return result.Match(
             success => Ok(new PostPaymentResponse(
                 success.Payment.Id,
-                success.Payment.Status,
+                success.Payment.Status.ToApi(),
                 success.Payment.LastFourCardDigits,
                 success.Payment.ExpiryMonth,
                 success.Payment.ExpiryYear,
@@ -52,7 +53,7 @@ public class PaymentsController : Controller
 
         return Ok(new GetPaymentResponse(
             payment.Id,
-            payment.Status,
+            payment.Status.ToApi(),
             payment.LastFourCardDigits,
             payment.ExpiryMonth,
             payment.ExpiryYear,

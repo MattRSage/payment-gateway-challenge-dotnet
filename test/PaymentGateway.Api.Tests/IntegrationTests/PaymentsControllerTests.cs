@@ -85,7 +85,7 @@ public class PaymentsControllerTests
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         paymentResponse!.Id.Should().NotBeEmpty();
-        paymentResponse.Status.Should().Be(PaymentStatus.Authorized);
+        paymentResponse.Status.Should().Be(PaymentStatus.Authorized.ToString());
         paymentResponse.CardNumberLastFour.Should().Be(request.CardNumber[^4..]);
         paymentResponse.ExpiryMonth.Should().Be(request.ExpiryMonth);
         paymentResponse.ExpiryYear.Should().Be(request.ExpiryYear);
@@ -115,7 +115,7 @@ public class PaymentsControllerTests
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         paymentResponse!.Id.Should().NotBeEmpty();
-        paymentResponse.Status.Should().Be(PaymentStatus.Declined);
+        paymentResponse.Status.Should().Be(PaymentStatus.Declined.ToString());
         paymentResponse.CardNumberLastFour.Should().Be(request.CardNumber[^4..]);
         paymentResponse.ExpiryMonth.Should().Be(request.ExpiryMonth);
         paymentResponse.ExpiryYear.Should().Be(request.ExpiryYear);
@@ -165,8 +165,8 @@ public class PaymentsControllerTests
     }
 
     [Theory]
-    [InlineData("2222405343248877", 4, 2025, "123", "GBP", 100, PaymentStatus.Authorized)] // Authorized payment
-    [InlineData("2222405343248112", 1, 2026, "456", "USD", 60000, PaymentStatus.Declined)] // Declined payment
+    [InlineData("2222405343248877", 4, 2025, "123", "GBP", 100, "Authorized")] // Authorized payment
+    [InlineData("2222405343248112", 1, 2026, "456", "USD", 60000, "Declined")] // Declined payment
     public async Task PostPayment_ThenRetrieve_ReturnsPayment(
         string cardNumber,
         int expiryMonth,
@@ -174,7 +174,7 @@ public class PaymentsControllerTests
         string cvv,
         string currency,
         int amount,
-        PaymentStatus paymentStatus)
+        string paymentStatus)
     {
         // Arrange
         var webApplicationFactory = new WebApplicationFactory<PaymentsController>();
